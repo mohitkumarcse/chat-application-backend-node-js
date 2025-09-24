@@ -13,30 +13,27 @@ const io = new Server(server, {
   }
 });
 io.on('connection', (socket) => {
-  console.log('Socket Connected!', socket.id);
+  //console.log('Socket Connected!', socket.id);
 
-  socket.on('join_room', (data) => {
-    socket.join(data);
-    console.log(`User Id - ${socket.id} joined Room ${data}`);
+  socket.on('join_room', (roomName) => {
+    socket.join(roomName);
+    // console.log(`User Id - ${socket.id} joined Room ${roomName}`);
   });
 
   socket.on('send_message', (data) => {
-    console.log('send message', data)
-
-    socket.to(data.chatRoom).emit('receive_message', data);
-  })
-
-  socket.on('disconnect', () => {
-    console.log('Socket disconnected.', socket.id);
+    console.log('send message', data);
+    // Emit to everyone in room including sender
+    io.in(data.chatRoom).emit('receive_message', data);
   });
 
-
+  socket.on('disconnect', () => {
+    //console.log('Socket disconnected.', socket.id);
+  });
 });
-
 
 app.use(cors());
 
 
 server.listen(4000, () => {
-  console.log('Server is running on port 400');
+  //console.log('Server is running on port 400');
 })
